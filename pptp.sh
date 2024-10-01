@@ -3,6 +3,9 @@
 : ' установка и настройка PPTP в две команды (Ubuntu 20-22, для 24 требует доработки)
 wget junger.zzux.com/vpn/pptp.sh
 sh pptp.sh
+
+ip link set dev ppp0 mtu 1500
+sudo ifconfig ppp0 mtu 1500
 '
 : ' 
 
@@ -53,6 +56,7 @@ iptables -t mangle -I POSTROUTING -p tcp --dport 80 -m set --match-set zapret ds
 iptables -t mangle -I POSTROUTING -p tcp --dport 80 -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:5 -m set --match-set zapret dst -j NFQUEUE --queue-num 200 --queue-bypass
 
 '
+
 
 sudo apt update && apt upgrade -y && apt autoremove -y
 apt-get -y install iptables
