@@ -101,6 +101,8 @@ iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -d 0.0.0.0/0 -o $network_interfac
 iptables -I FORWARD -s 10.10.0.0/24 -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j TCPMSS --set-mss 1356
 iptables -I FORWARD -s 10.10.0.0/24 -p tcp -j ACCEPT
 iptables -I FORWARD -s 10.10.0.0/24 -p udp -j ACCEPT
+
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 END
 sh /etc/rc.local
 
