@@ -68,5 +68,7 @@ docker ps
 echo ""
 echo ""
 echo "== WEB адрес WG == http://$wg_host:$wg_webport"
+echo "Web Password == $PASS"
+echo "Web PASSWORD_HASH == $wg_pass"
 
 exit 0
