@@ -63,25 +63,12 @@ wg_webport=51821
 wg_listen=51820
 
 echo "== Генерация случайных параметров обфускации AmneziaWG =="
-AWG_JMIN=40
-AWG_JMAX=110
-AWG_S1=$((RANDOM % 90 + 10))
-AWG_S2=$((RANDOM % 90 + 10))
-AWG_H1=$((RANDOM % 1500000000 + 1000000000))
-AWG_H2=$((RANDOM % 1500000000 + 1000000000))
-AWG_H3=$((RANDOM % 1500000000 + 1000000000))
-AWG_H4=$((RANDOM % 1500000000 + 1000000000))
-
-echo "== Параметры обфускации: =="
-echo "Jmin: $AWG_JMIN, Jmax: $AWG_JMAX"
-echo "S1: $AWG_S1, S2: $AWG_S2"
-echo "H1-H4: $AWG_H1, $AWG_H2, $AWG_H3, $AWG_H4"
+AWG_JMIN=50
+AWG_JMAX=200
 
 ### ########################################
 # 4. Запуск контейнера с AmneziaWG
 ### ########################################
-echo "== Запуск контейнера ghcr.io/spcfox/amnezia-wg-easy:latest =="
-
 # Создаем директорию для конфигов
 mkdir -p ~/.amnezia-wg-easy
 
@@ -95,15 +82,10 @@ docker run -d \
   -e WG_ALLOWED_IPS="0.0.0.0/1,128.0.0.0/1,::/1,8000::/1" \
   -e WG_DEFAULT_DNS="9.9.9.9,1.1.1.1,8.8.8.8" \
   -e WG_MTU=1420 \
+  -e UI_TRAFFIC_STATS=true \
   -e WG_PERSISTENT_KEEPALIVE=25 \
   -e JMIN="$AWG_JMIN" \
   -e JMAX="$AWG_JMAX" \
-  -e S1="$AWG_S1" \
-  -e S2="$AWG_S2" \
-  -e H1="$AWG_H1" \
-  -e H2="$AWG_H2" \
-  -e H3="$AWG_H3" \
-  -e H4="$AWG_H4" \
   -v "$HOME/.amnezia-wg-easy:/etc/wireguard" \
   -p 51820:51820/udp \
   -p 51821:51821/tcp \
