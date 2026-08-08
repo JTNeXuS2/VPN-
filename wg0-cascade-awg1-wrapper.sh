@@ -48,6 +48,13 @@ bash /root/awg/wg0-cascade-awg1-wrapper.sh
 
 set -euo pipefail
 
+###############################################
+# запустить тунель между VPSками awg0 -> awg1
+systemctl stop awg-quick@awg1
+chmod 600 /etc/amnezia/amneziawg/awg1.conf
+systemctl start awg-quick@awg1
+###############################################
+
 # 1. Сначала запускаем оригинальный скрипт каскада, который скачивает базы и настраивает awg0
 echo "=== Запуск оригинального скрипта каскада ==="
 bash /root/awg/awg-routing.sh
