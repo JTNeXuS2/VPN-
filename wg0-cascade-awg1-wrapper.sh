@@ -41,11 +41,43 @@ awg show awg1
 '
 
 # для автозапуска
+'
+# 1. Создаем Systemd службу для автозапуска правил после перезагрузки
+cat << 'EOF' > /etc/systemd/system/wg0-cascade.service
+[Unit]
+Description=Run WG0 Cascade Wrapper after delay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/chmod +x /root/awg/wg0-cascade-awg1-wrapper.sh
+ExecStart=/bin/bash /root/awg/wg0-cascade-awg1-wrapper.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 2. Перезапускаем конфигурацию systemd и добавляем службу в автозапуск
+systemctl daemon-reload
+systemctl enable wg0-cascade.service
+
+# 3. Выполняем первый запуск каскада прямо сейчас
+if [ -f "/root/awg/wg0-cascade-awg1-wrapper.sh" ]; then
+    chmod +x /root/awg/wg0-cascade-awg1-wrapper.sh
+    bash /root/awg/wg0-cascade-awg1-wrapper.sh
+    systemctl start wg0-cascade.service
+else
+    echo "ОШИБКА: Файл /root/awg/wg0-cascade-awg1-wrapper.sh не найден!"
+fi
+'
+
 '# запустить
 chmod +x /root/awg/wg0-cascade-awg1-wrapper.sh
 bash /root/awg/wg0-cascade-awg1-wrapper.sh
 '
-
+clear
 set -euo pipefail
 
 ###############################################
