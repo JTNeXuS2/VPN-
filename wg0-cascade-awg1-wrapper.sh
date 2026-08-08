@@ -1,4 +1,46 @@
 #!/bin/sh
+'
+# ## Ручная часть ##
+# VPS_1 ставим скриптом ядро AWG + панель для удобства и создаем вручную клиента awg1.conf - amnezia-web-ui-setup.sh
+# VPS_0 ставим скриптом AWG или WG обязательно интерфейс wg0 в режиме HOST - wg0-cascade_VPS_0.sh
+#
+# редактируем клиент-конфиг и помещаем в /etc/amnezia/amneziawg/awg1.conf на VPS_0
+# обязательно добавить
+# [Interface]
+# MTU = 1280
+# Table = off
+# DNS можно убрать
+##
+
+# Тут можно скриптом
+apt update && apt install -y curl ipset
+# 1. Добавить репозиторий Amnezia
+sudo add-apt-repository ppa:amnezia/ppa -y
+sudo apt install -y amneziawg dkms
+# 2. Установить AmneziaWG
+sudo apt-get install -y amneziawg-dkms amneziawg-tools
+# 3. Загрузить модуль ядра
+sudo modprobe amneziawg
+# 4. Добавить модуль AWG в автозагрузку
+if ! grep -q "^amneziawg$" /etc/modules; then
+  echo "amneziawg" | sudo tee -a /etc/modules
+fi
+
+# Поднять тунель VPS_0(awg) -> VPS_1(awg)  
+chmod 600 /etc/amnezia/amneziawg/awg1.conf
+systemctl start awg-quick@awg1
+awg show awg1
+
+###############################
+# обязательно проверить/подправить awg-routing.sh /root/awg/awg-routing.sh
+# https://github.com/bivlked/amneziawg-installer/blob/main/CASCADE.md#step4
+# CLIENT_SUBNET="172.16.17.0/24"          # подсеть клиентов AWG0 (см. Address в /etc/amnezia/amneziawg/awg0.conf)
+# AWG1_ENDPOINT="CHANGE_ME"               # внешний IP сервера AWG1 (Endpoint из awg1.conf, без порта)
+##
+# после можно использовтаь wg0-cascade-awg1-wrapper.sh
+'
+
+# для автозапуска
 '# запустить
 chmod +x /root/awg/wg0-cascade-awg1-wrapper.sh
 bash /root/awg/wg0-cascade-awg1-wrapper.sh
