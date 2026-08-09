@@ -12,7 +12,8 @@
 # DNS можно убрать
 ##
 
-# Тут можно скриптом
+###############################################
+# Установка ядра AWG
 apt update && apt install -y curl ipset
 # 1. Добавить репозиторий Amnezia
 sudo add-apt-repository ppa:amnezia/ppa -y
@@ -25,11 +26,19 @@ sudo modprobe amneziawg
 if ! grep -q "^amneziawg$" /etc/modules; then
   echo "amneziawg" | sudo tee -a /etc/modules
 fi
+###############################################
 
-# Поднять тунель VPS_0(awg) -> VPS_1(awg)  
+###############################################
+# запустить тунель между VPSками awg0 -> awg1
+systemctl stop awg-quick@awg1
 chmod 600 /etc/amnezia/amneziawg/awg1.conf
 systemctl start awg-quick@awg1
-awg show awg1
+# Создаем симлинк (не обязателен, чисто для удобства)
+if [ ! -L /root/awg/awg1.conf ]; then
+    ln -s /etc/amnezia/amneziawg/awg1.conf /root/awg/awg1_link.conf
+fi
+###############################################
+
 
 ###############################
 # обязательно проверить/подправить awg-routing.sh /root/awg/awg-routing.sh
