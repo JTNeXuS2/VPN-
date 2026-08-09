@@ -5,9 +5,9 @@
 # VPS_0 ставим скриптом AWG или WG обязательно интерфейс wg0 в режиме HOST - wg0-cascade_VPS_0.sh
 #
 # редактируем клиент-конфиг и помещаем в /etc/amnezia/amneziawg/awg1.conf на VPS_0
-# обязательно добавить
+# обязательно добавить (при проблемах понижаем MTU до 1280)
 # [Interface]
-# MTU = 1280
+# MTU = 1420 
 # Table = off
 # DNS можно убрать
 ##
@@ -85,6 +85,10 @@ set -euo pipefail
 systemctl stop awg-quick@awg1
 chmod 600 /etc/amnezia/amneziawg/awg1.conf
 systemctl start awg-quick@awg1
+# Создаем симлинк (не обязателен, чисто для удобства)
+if [ ! -L /root/awg/awg1.conf ]; then
+    ln -s /etc/amnezia/amneziawg/awg1.conf /root/awg/awg1.conf
+fi
 ###############################################
 
 # 1. Сначала запускаем оригинальный скрипт каскада, который скачивает базы и настраивает awg0
