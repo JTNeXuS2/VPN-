@@ -32,6 +32,7 @@ fi
 systemctl stop awg-quick@awg1
 chmod 600 /etc/amnezia/amneziawg/awg1.conf
 systemctl start awg-quick@awg1
+sudo awg show awg1
 if [ ! -L /root/awg/awg1_link.conf ]; then
     ln -s /etc/amnezia/amneziawg/awg1.conf /root/awg/awg1_link.conf
 fi
