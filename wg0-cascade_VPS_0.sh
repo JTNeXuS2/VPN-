@@ -53,10 +53,10 @@ docker run --detach \
   --env PORT=$wg_webport \
   --env WG_CONFIG_PORT=$wg_listen \
   --env WG_PORT=$wg_listen \
-  --env WG_ALLOWED_IPS="0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1" \
+  --env WG_ALLOWED_IPS="0.0.0.0/0, ::/0" \
   --env WG_DEFAULT_DNS="9.9.9.9,1.1.1.1,8.8.8.8" \
   --env WG_MTU=1280 \
-  --env WG_PERSISTENT_KEEPALIVE=15 \
+  --env WG_PERSISTENT_KEEPALIVE=25 \
   --volume ~/.wg-easy:/etc/wireguard \
   --cap-add NET_ADMIN \
   --cap-add SYS_MODULE \
@@ -70,5 +70,21 @@ echo ""
 echo "== WEB адрес WG == http://$wg_host:$wg_webport"
 echo "== Web Password == $PASS"
 echo "== Web PASSWORD_HASH == $wg_pass"
+
+### ########################################
+# разрешим трафик
+### ########################################
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -A FORWARD -i wg0 -j ACCEPT
+sudo iptables -A FORWARD -o wg0 -j ACCEPT
+
+### ########################################
+# сохраним sysctl 
+### ########################################
+sudo mkdir -p /etc/sysctl.d
+cat <<EOF | sudo tee /etc/sysctl.d/99-wireguard-forward.conf
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.src_valid_mark=1
+EOF
 
 exit 0
