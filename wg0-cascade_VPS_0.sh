@@ -56,6 +56,7 @@ docker run --detach \
   --env WG_ALLOWED_IPS="0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1" \
   --env WG_DEFAULT_DNS="9.9.9.9,1.1.1.1,8.8.8.8" \
   --env WG_MTU=1280 \
+  --env WG_PERSISTENT_KEEPALIVE=15 \
   --volume ~/.wg-easy:/etc/wireguard \
   --cap-add NET_ADMIN \
   --cap-add SYS_MODULE \
