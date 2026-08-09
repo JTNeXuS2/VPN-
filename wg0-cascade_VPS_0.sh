@@ -9,7 +9,7 @@ sudo apt update && apt upgrade -y && apt autoremove -y
 # sudo docker rmi $(sudo docker images -q)
 curl -sSL https://get.docker.com | sh
 sudo usermod -aG docker $(whoami)
-sudo apt install apache2-utils
+sudo apt install -y apache2-utils
 
 ### ########################################
 # Установим/обновим Wireguard
