@@ -73,10 +73,13 @@ echo "== Web PASSWORD_HASH == $wg_pass"
 
 ### ########################################
 # разрешим трафик
-### ########################################
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i wg0 -j ACCEPT
-sudo iptables -A FORWARD -o wg0 -j ACCEPT
+# Автоматически находим имя основного интерфейса с доступом в интернет
+MAIN_INTF=$(ip route | grep default | awk '{print $5}' | head -n1)
+
+sudo iptables -t nat -A POSTROUTING -o "$MAIN_INTF" -j MASQUERADE
+sudo iptables -A FORWARD -i awg1 -j ACCEPT
+sudo iptables -A FORWARD -o awg1 -j ACCEPT
+
 
 ### ########################################
 # сохраним sysctl 
