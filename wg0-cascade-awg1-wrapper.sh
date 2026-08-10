@@ -15,7 +15,7 @@
 # VPS_0 Установка ядра AWG
 '
 ###############################################
-apt update && apt install -y curl ipset
+sudo apt update && apt install -y curl ipset
 sudo add-apt-repository ppa:amnezia/ppa -y
 sudo apt install -y amneziawg dkms
 sudo apt-get install -y amneziawg-dkms amneziawg-tools
