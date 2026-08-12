@@ -55,6 +55,7 @@ docker run --detach \
   --env WG_PORT=$wg_listen \
   --env WG_DEFAULT_DNS="9.9.9.9,1.1.1.1,8.8.8.8" \
   --env WG_ALLOWED_IPS="0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1" \
+  --env WG_PERSISTENT_KEEPALIVE=25 \
   --volume ~/.wg-easy:/etc/wireguard \
   --publish $wg_listen:$wg_listen/udp \
   --publish $wg_webport:$wg_webport/tcp \
