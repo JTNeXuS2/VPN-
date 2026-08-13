@@ -12,6 +12,7 @@ sudo chmod +x /root/forward_junger.sh
 
 clear
 echo "================================================"
+DOMAIN="junger.zzux.com"
 
 # Задаем жесткие пути к файлам для работы через cron
 LOG_FILE="/root/forward_junger.log"
@@ -24,9 +25,10 @@ if [ -f "$OLD_IP_FILE" ]; then
 fi
 
 # Получаем ТОЛЬКО IP-адрес. 
-IP=$(dig +short +tries=2 +time=3 ://zzux.com | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
-# Если основной метод вернул пустую строку, запрашиваем через curl
-[ -z "$IP" ] && IP=$(curl -s --max-time 3 https://ifconfig.me | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+IP=$(dig +short +tries=2 +time=3 "$DOMAIN" | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+if [ -z "$IP" ]; then
+    IP=$(host -W 3 "$DOMAIN" | grep -E -o -m1 '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+fi
 
 echo "Current IP address: $IP"
 echo "Old IP address: $OLD_IP"
