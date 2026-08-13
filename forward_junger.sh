@@ -24,8 +24,9 @@ if [ -f "$OLD_IP_FILE" ]; then
 fi
 
 # Получаем ТОЛЬКО IP-адрес. 
-# +tries=2 +time=3 ускоряют работу при сбое. С помощью grep берем строго IPv4.
-IP=$(dig +short +tries=2 +time=3 junger.zzux.com | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+IP=$(dig +short +tries=2 +time=3 ://zzux.com | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+# Если основной метод вернул пустую строку, запрашиваем через curl
+[ -z "$IP" ] && IP=$(curl -s --max-time 3 https://ifconfig.me | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
 
 echo "Current IP address: $IP"
 echo "Old IP address: $OLD_IP"
@@ -49,13 +50,11 @@ if [ -n "$IP" ]; then
         fi
 
         # Добавьте новые правила
-        if [ -n "$IP" ]; then
-            echo "ADD NEW RULES"
-            sudo iptables -t nat -A PREROUTING -p udp --dport 60000:61100 -j DNAT --to-destination "$IP"
-            sudo iptables -A FORWARD -p udp -d "$IP" --dport 60000:61100 -j ACCEPT
-            sudo iptables -t nat -A PREROUTING -p tcp --dport 60000:61100 -j DNAT --to-destination "$IP"
-            sudo iptables -A FORWARD -p tcp -d "$IP" --dport 60000:61100 -j ACCEPT
-        fi
+        echo "ADD NEW RULES"
+        sudo iptables -t nat -A PREROUTING -p udp --dport 60000:61100 -j DNAT --to-destination "$IP"
+        sudo iptables -A FORWARD -p udp -d "$IP" --dport 60000:61100 -j ACCEPT
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 60000:61100 -j DNAT --to-destination "$IP"
+        sudo iptables -A FORWARD -p tcp -d "$IP" --dport 60000:61100 -j ACCEPT
 
         # Сохраним текущий IP для дальнейшего использования
         echo "$IP" > "$OLD_IP_FILE"
