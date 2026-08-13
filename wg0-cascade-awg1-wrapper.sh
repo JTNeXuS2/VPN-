@@ -1,6 +1,6 @@
 #!/bin/sh
 # Ручная часть
-'
+: '
 # VPS_0 ставим скриптом AWG или WG обязательно интерфейс wg0 в режиме HOST - wg0-cascade_VPS_0.sh
 # VPS_1 ставим скриптом ядро AWG + панель для удобства - amnezia-web-ui-setup.sh
 # VPS_1 в веб панели создаем вручную клиента awg1.conf
@@ -13,7 +13,7 @@
 '
 
 # VPS_0 Установка ядра AWG
-'
+: '
 ###############################################
 sudo apt update && apt install -y curl ipset resolvconf
 sudo add-apt-repository ppa:amnezia/ppa -y
@@ -27,7 +27,7 @@ fi
 '
 
 # запустить тунель между VPSками awg0 -> awg1
-'
+: '
 ###############################################
 systemctl stop awg-quick@awg1
 chmod 600 /etc/amnezia/amneziawg/awg1.conf
@@ -39,7 +39,7 @@ fi
 ###############################################
 '
 
-'
+: '
 ###############################
 # обязательно проверить/подправить /root/awg/awg-routing.sh
 # согласно инструкции https://github.com/bivlked/amneziawg-installer/blob/main/CASCADE.md#step4
@@ -50,7 +50,7 @@ fi
 '
 
 # для автозапуска
-'
+: '
 # 1. Создаем Systemd службу для автозапуска правил после перезагрузки
 cat << 'EOF' > /etc/systemd/system/wg0-cascade.service
 [Unit]
@@ -82,7 +82,8 @@ else
 fi
 '
 
-'# запустить
+# запустить
+: '
 chmod +x /root/awg/wg0-cascade-awg1-wrapper.sh
 bash /root/awg/wg0-cascade-awg1-wrapper.sh
 '
