@@ -15,14 +15,11 @@
 # VPS_0 Установка ядра AWG
 : '
 ###############################################
-sudo apt update && apt install -y curl ipset resolvconf
-sudo add-apt-repository ppa:amnezia/ppa -y
-sudo apt install -y amneziawg dkms
-sudo apt-get install -y amneziawg-dkms amneziawg-tools
-sudo modprobe amneziawg
-if ! grep -q "^amneziawg$" /etc/modules; then
-  echo "amneziawg" | sudo tee -a /etc/modules
-fi
+#sudo apt purge -y amneziawg amneziawg-dkms amneziawg-tools && sudo apt autoremove -y
+sudo apt update -y && sudo apt install -y software-properties-common && sudo add-apt-repository ppa:amnezia/ppa -y && sudo apt update -y
+sudo apt install -y curl ipset resolvconf dkms linux-headers-$(uname -r) amneziawg-tools amneziawg-dkms
+sudo modprobe amneziawg && ! grep -q "^amneziawg$" /etc/modules && echo "amneziawg" | sudo tee -a /etc/modules
+sudo dkms status && sudo lsmod | grep amneziawg
 ###############################################
 '
 
