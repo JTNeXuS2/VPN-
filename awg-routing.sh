@@ -7,7 +7,8 @@ set -euo pipefail
 # ===== параметры (поправь под свою установку) =====
 CLIENT_SUBNET="10.8.0.0/24"          # подсеть клиентов AWG0 (см. Address в /etc/amnezia/amneziawg/awg0.conf)
 AWG1_IF="awg1"                           # имя интерфейса туннеля к серверу-выходу
-AWG1_ENDPOINT="78.17.74.204"               # внешний IP сервера AWG1 (Endpoint из awg1.conf, без порта)
+#AWG1_ENDPOINT="78.17.74.204"               # внешний IP сервера AWG1 (Endpoint из awg1.conf, без порта)
+AWG1_ENDPOINT=$(grep -i '^Endpoint' /etc/amnezia/amneziawg/awg1.conf | awk '{print $3}' | cut -d':' -f1)
 TABLE_ID=100                            # номер таблицы маршрутизации для трафика "на выход"
 FWMARK="0x1"                            # метка для трафика, уходящего через awg1
 RULE_PRIO=10000                        # приоритет правила ip rule (нестандартный, чтобы не конфликтовать)
