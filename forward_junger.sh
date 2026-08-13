@@ -44,7 +44,7 @@ if [ -n "$IP" ]; then
     else
         # Удалите старые правила
         if [ -n "$OLD_IP" ]; then
-            echo "DELETE OLD RULES"
+            echo "DELETE OLD RULES $OLD_IP"
             sudo iptables -t nat -D PREROUTING -p udp --dport 60000:61100 -j DNAT --to-destination "$OLD_IP" 2>/dev/null
             sudo iptables -D FORWARD -p udp -d "$OLD_IP" --dport 60000:61100 -j ACCEPT 2>/dev/null
             sudo iptables -t nat -D PREROUTING -p tcp --dport 60000:61100 -j DNAT --to-destination "$OLD_IP" 2>/dev/null
@@ -52,7 +52,7 @@ if [ -n "$IP" ]; then
         fi
 
         # Добавьте новые правила
-        echo "ADD NEW RULES"
+        echo "ADD NEW RULES $IP"
         sudo iptables -t nat -A PREROUTING -p udp --dport 60000:61100 -j DNAT --to-destination "$IP"
         sudo iptables -A FORWARD -p udp -d "$IP" --dport 60000:61100 -j ACCEPT
         sudo iptables -t nat -A PREROUTING -p tcp --dport 60000:61100 -j DNAT --to-destination "$IP"
