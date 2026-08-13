@@ -25,13 +25,18 @@ if [ -f "$OLD_IP_FILE" ]; then
 fi
 
 # Получаем ТОЛЬКО IP-адрес. 
-IP=$(dig +short +tries=2 +time=3 "$DOMAIN" | grep -E -m1 '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$')
+IP=$(dig +short +tries=2 +time=3 "$DOMAIN" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | grep -v '^127\.' | head -n 1)
 if [ -z "$IP" ]; then
-    IP=$(host -W 3 "$DOMAIN" | grep -E -o -m1 '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+    # Если dig не справился, используем host, но фильтруем только строку с ответом "has address"
+    IP=$(host -W 3 "$DOMAIN" | grep 'has address' | grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | grep -v '^127\.' | head -n 1)
 fi
-
-echo "Current IP address: $IP"
-echo "Old IP address: $OLD_IP"
+# Если IP всё ещё пустой, значит домен не резолвится
+if [ -z "$IP" ]; then
+    echo "Ошибка: Не удалось разрешить IP-адрес для домена $DOMAIN"
+else
+    echo "Current IP address: $IP"
+    echo "Old IP address: $OLD_IP"
+fi
 echo "================================================"
 
 # Строгая проверка: IP-адрес не пустой И является валидным IPv4
